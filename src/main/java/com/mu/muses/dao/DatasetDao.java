@@ -1,6 +1,5 @@
 package com.mu.muses.dao;
 
-import com.mu.muses.dto.Dashboard;
 import com.mu.muses.entity.Dataset;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,11 +13,13 @@ public interface DatasetDao extends JpaRepository<Dataset,Integer> {
     @Modifying
     void deleteById(int id);
 
-    @Query(value = "select * from dataset where create_member like :member and topic_list like %:topic%",nativeQuery = true)
+    Dataset findById(int id);
+
+    @Query(value = "select * from dataset where create_member = :member and topic_list like concat('%',:topic,'%') ",nativeQuery = true)
     List<Dataset> findDash(@Param("member") String owner,@Param("topic") String topic);
 
-    @Query(value = "select * from dataset where create_member like :member",nativeQuery = true)
-    List<Dataset> findDash(@Param("member") String owner);
+    @Query(value = "select * from dataset where topic_list like concat('%',:topic,'%') ",nativeQuery = true)
+    List<Dataset> findDash(@Param("topic") String topic);
 
     @Query(value = "select * from dataset ",nativeQuery = true)
     List<Dataset> findDash();

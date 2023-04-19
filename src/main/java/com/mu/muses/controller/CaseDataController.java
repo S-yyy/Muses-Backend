@@ -9,6 +9,7 @@ import com.mu.muses.entity.Enums;
 import com.mu.muses.service.CaseDataService;
 import com.mu.muses.service.DatasetService;
 import com.mu.muses.service.EnumsService;
+import io.swagger.models.auth.In;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ public class CaseDataController {
     DatasetService datasetService;
 
     @Operation(summary = "查询病例")
+    @CrossOrigin
     @PostMapping(value = "/api/database/cases")
     @ResponseBody
     public Response findCaseData(@RequestBody CaseQuery caseQuery){
@@ -46,7 +48,16 @@ public class CaseDataController {
         return response;
     }
 
+    @Operation(summary = "查询病例")
+    @CrossOrigin
+    @PostMapping(value = "/api/database/case")
+    @ResponseBody
+    public CaseData findSingleCase(@RequestParam int id){
+        return caseDataService.findById(id);
+    }
+
     @Operation(summary = "录入病例")
+    @CrossOrigin
     @PostMapping(value = "/api/database/cases/saveCaseData")
     @ResponseBody
     public Boolean saveCaseData(@RequestBody CaseData caseData){
@@ -54,6 +65,7 @@ public class CaseDataController {
     }
 
     @Operation(summary = "批量录入病例")
+    @CrossOrigin
     @PostMapping(value = "/api/database/cases/saveCaseDatas")
     @ResponseBody
     public Boolean saveCaseDatas(@RequestBody List<CaseData> caseDatas){
@@ -61,9 +73,10 @@ public class CaseDataController {
     }
 
     @Operation(summary = "删除病例")
+    @CrossOrigin
     @DeleteMapping(value = "/api/database/cases/deletePostData")
     @ResponseBody
-    public Boolean deleteCaseDatas(@RequestParam int id){
+    public Boolean deleteCaseData(@RequestParam int id){
         if(caseDataService.findById(id)==null){
             return false;
         }
@@ -73,7 +86,25 @@ public class CaseDataController {
         }
     }
 
+    @Operation(summary = "批量删除病例")
+    @CrossOrigin
+    @DeleteMapping(value = "/api/database/cases/deletePostDatas")
+    @ResponseBody
+    public Boolean deleteCaseDatas(@RequestBody List<Integer> id){
+        Boolean delete = true;
+        for (int item : id){
+            if(caseDataService.findById(item)==null){
+                delete = false;
+            }
+        else {
+                caseDataService.deleteByID(item);
+            }
+        }
+        return delete;
+    }
+
     @Operation(summary = "查询患者所有时间节点病例列表")
+    @CrossOrigin
     @GetMapping(value = "/api/database/cases/patients")
     @ResponseBody
     public List<CaseData> getCaseDatas(@RequestParam int patientId){
@@ -81,6 +112,7 @@ public class CaseDataController {
     }
 
     @Operation(summary = "查询患者某个时间点病例列表")
+    @CrossOrigin
     @GetMapping(value = "/api/database/cases/patient")
     @ResponseBody
     public CaseData getPatientCaseData(@RequestParam int patientId,@RequestParam String visitDate){
@@ -88,6 +120,7 @@ public class CaseDataController {
     }
 
     @Operation(summary = "查询诊断类型枚举")
+    @CrossOrigin
     @GetMapping(value = "/api/database/cases/treatmentType/enums")
     @ResponseBody
     public List<Enums> getTreatmentTypeEnums(){
@@ -95,6 +128,7 @@ public class CaseDataController {
     }
 
     @Operation(summary = "查询数据集列表")
+    @CrossOrigin
     @PostMapping(value = "/api/database/datasets")
     @ResponseBody
     public Response findDatasets(@RequestBody DatabaseQuery databaseQuery){
@@ -108,6 +142,7 @@ public class CaseDataController {
     }
 
     @Operation(summary = "保存或更新数据集")
+    @CrossOrigin
     @PostMapping(value = "/api/database/datasets/saveDataset")
     @ResponseBody
     public boolean saveRole(@RequestBody Dataset dataset){
@@ -115,11 +150,31 @@ public class CaseDataController {
     }
 
     @Operation(summary = "删除数据集")
+    @CrossOrigin
     @DeleteMapping(value = "/api/database/datasets/deleteDataset")
     @ResponseBody
     public boolean saveRole(@RequestParam int id){
+        if (datasetService.findById(id)==null){
+            return false;
+        }
         return datasetService.delete(id);
     }
 
+    @Operation(summary = "批量删除数据集")
+    @CrossOrigin
+    @DeleteMapping(value = "/api/database/cases/deleteDatasets")
+    @ResponseBody
+    public Boolean deleteDatasets(@RequestParam List<Integer> id){
+        Boolean delete = true;
+        for (int item : id){
+            if(datasetService.findById(item)==null){
+                delete = false;
+            }
+            else {
+                datasetService.delete(item);
+            }
+        }
+        return delete;
+    }
 
 }

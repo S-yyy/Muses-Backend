@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +44,24 @@ public class DatasetService {
 
     public Page<Dataset> findDash(DatabaseQuery databaseQuery){
         Pageable pageable = PageRequest.of(databaseQuery.pageNo, databaseQuery.pageSize);
-        List<Dataset> datasets = datasetDao.findDash(databaseQuery.owner,databaseQuery.topic);
+        System.out.println(databaseQuery.owner);
+        System.out.println(databaseQuery.topic);
+        if (databaseQuery.topic == null){
+            databaseQuery.topic = "";
+        }
+        List<Dataset> datasets;
+        if(databaseQuery.owner == null){
+            datasets = datasetDao.findDash(databaseQuery.topic);
+        }
+        else {
+            datasets = datasetDao.findDash(databaseQuery.owner, databaseQuery.topic);
+        }
         Page<Dataset> pages = new PageImpl<>(datasets,pageable,datasets.size());
         return pages;
+    }
+
+    public Dataset findById(int id){
+        return datasetDao.findById(id);
     }
 
     public List<Map<String,Object>> findStep1(){

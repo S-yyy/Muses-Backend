@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,6 +26,7 @@ public class UserController {
     RoleService roleService;
 
     @Operation(summary = "用户登录")
+    @CrossOrigin
     @PostMapping(value = "/api/account/login")
     @ResponseBody
     public ResponseEntity<String> login( @RequestBody Login login) {
@@ -46,6 +44,7 @@ public class UserController {
     }
 
     @Operation(summary = "获取角色列表")
+    @CrossOrigin
     @GetMapping(value = "/api/account/roles")
     @ResponseBody
     public List<Role> getRoleList(){
@@ -53,6 +52,7 @@ public class UserController {
     }
 
     @Operation(summary = "保存或新建角色")
+    @CrossOrigin
     @PostMapping(value = "/api/account/saveRole")
     @ResponseBody
     public boolean saveRole(@RequestBody Role role){
@@ -69,6 +69,7 @@ public class UserController {
     }
 
     @Operation(summary = "查询用户列表")
+    @CrossOrigin
     @GetMapping(value = "/api/account/users")
     @ResponseBody
     public List<User> users(){
@@ -76,6 +77,7 @@ public class UserController {
     }
 
     @Operation(summary = "保存或更新用户")
+    @CrossOrigin
     @GetMapping(value = "/api/account/saveUser")
     @ResponseBody
     public boolean saveUser(@RequestBody User user){

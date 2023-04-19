@@ -18,6 +18,7 @@ public class ResearchController {
     ResearchService researchService;
 
     @Operation(summary = "课题进度预览")
+    @CrossOrigin
     @GetMapping(value = "/api/research/topics/status")
     @ResponseBody
     public List<Research> getTopicAll() {
@@ -25,6 +26,7 @@ public class ResearchController {
     }
 
     @Operation(summary = "课题进度预览")
+    @CrossOrigin
     @GetMapping(value = "/api/research/topics/dist/status")
     @ResponseBody
     public List<Map<String,Object>> getTopicDistStatus() {
@@ -33,6 +35,7 @@ public class ResearchController {
 
 
     @Operation(summary = "保存或更新课题数据")
+    @CrossOrigin
     @PostMapping(value = "/api/research/topics/saveTopic")
     @ResponseBody
     public Boolean saveTopic(@RequestBody Research research) {
@@ -40,6 +43,7 @@ public class ResearchController {
     }
 
     @Operation(summary = "查询课题列表")
+    @CrossOrigin
     @GetMapping(value = "/api/research/topics")
     @ResponseBody
     public Response getTopic(@RequestParam int pageNo, @RequestParam int pageSize) {
@@ -53,6 +57,7 @@ public class ResearchController {
     }
 
     @Operation(summary = "查询课题详情")
+    @CrossOrigin
     @GetMapping(value = "/api/research/topics/topic")
     @ResponseBody
     public Research getTopic(@RequestParam int id) {
@@ -60,14 +65,39 @@ public class ResearchController {
     }
 
     @Operation(summary = "删除课题")
+    @CrossOrigin
     @DeleteMapping(value = "/api/research/topics/deleteTopic")
     @ResponseBody
     public Boolean deleteTopic(@RequestParam int id) {
-        researchService.delete(id);
-        return true;
+        if (researchService.findById(id)==null){
+            return false;
+        }
+        else{
+            researchService.delete(id);
+            return true;
+        }
+
+    }
+
+    @Operation(summary = "批量删除课题")
+    @CrossOrigin
+    @DeleteMapping(value = "/api/research/topics/deleteTopics")
+    @ResponseBody
+    public Boolean deleteTopics(@RequestParam List<Integer> id) {
+        Boolean delete = true;
+        for( int item :id){
+            if (researchService.findById(item)==null){
+                delete = false;
+            }
+            else{
+                researchService.delete(item);
+            }
+        }
+        return delete;
     }
 
     @Operation(summary = "查询课题状态枚举")
+    @CrossOrigin
     @GetMapping(value = "/api/topics/status/enums")
     @ResponseBody
     public List<Map<String, Object>> getStatusEnums() {

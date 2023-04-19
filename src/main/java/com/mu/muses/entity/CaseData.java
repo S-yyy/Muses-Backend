@@ -3,6 +3,7 @@ package com.mu.muses.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(name = "casedata")
@@ -22,6 +23,6 @@ public class CaseData {
     public String illness;
     public String illnessSubtype;
     public String medicalSection;
-    public String visitDate;
+    public Date visitDate;
 
 }

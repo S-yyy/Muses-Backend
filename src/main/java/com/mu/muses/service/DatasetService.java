@@ -1,5 +1,6 @@
 package com.mu.muses.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.mu.muses.dao.DatasetDao;
 import com.mu.muses.dto.Dashboard;
 import com.mu.muses.dto.DatabaseQuery;
@@ -12,11 +13,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class DatasetService {
     @Autowired
     DatasetDao datasetDao;
+
 
     public boolean save(Dataset dataset){
         if(datasetDao.save(dataset)!=null){
@@ -64,19 +68,21 @@ public class DatasetService {
         return datasetDao.findById(id);
     }
 
-    public List<Map<String,Object>> findStep1(){
-        return datasetDao.find1();
+    public List<Dashboard> findTopics(){
+        List<String> topics= datasetDao.findTopic();
+        List<Dashboard> result = new ArrayList<>();
+        List<String> topicList = new ArrayList<>();
+        for(var item :topics){
+            List<String> topic = JSONArray.parseArray(String.valueOf(item),String.class);
+            topicList.addAll(topic);
+        }
+        Map<String, Long> resMap = topicList.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        for(var item :resMap.keySet()){
+            result.add(new Dashboard(resMap.get(item).intValue(),item));
+        }
+        return result;
     }
 
-    public List<Map<String,Object>> findStep2(String parts){
-        return datasetDao.find2(parts);
-    }
 
-    public List<Map<String,Object>> findStep3(String illness){
-        return datasetDao.find3(illness);
-    }
 
-    public List<Map<String, Object>> findDistImages() {
-        return datasetDao.findDist();
-    }
 }

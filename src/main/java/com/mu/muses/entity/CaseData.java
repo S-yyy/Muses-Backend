@@ -1,5 +1,6 @@
 package com.mu.muses.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ public class CaseData {
     public String illness;
     public String illnessSubtype;
     public String medicalSection;
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
     public Date visitDate;
 
 }

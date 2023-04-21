@@ -10,9 +10,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ResearchService {
@@ -33,7 +33,7 @@ public class ResearchService {
     }
 
     public Research findById(int id){
-        return researchDao.getById(id);
+        return researchDao.findById(id);
     }
 
     public Page<Research> findAll(int pageNum, int size){
@@ -56,4 +56,20 @@ public class ResearchService {
         list.add(new Dashboard(Status.Over.getIndex(),Status.Over.getName()));
         return list;
     }
+
+    public java.sql.Date StringToDate(String sDate) {
+        String str = sDate;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date d = null;
+        try {
+            d = format.parse(str);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        java.sql.Date date = new java.sql.Date(d.getTime());
+        return date;
+    }
+
+
+
 }

@@ -17,6 +17,24 @@ public class EnumsService {
         return enumsDao.findAllByTreatmentType();
     }
 
+    public List<Enums> findMedicalImagesEnums(){
+        return enumsDao.findAllByMedicalImages();
+    }
+
+    public List<Enums> findIllnessEnums(){
+        return enumsDao.findAllByIllness();
+    }
+
+    public List<Enums> findIllnessSubtypeEnums(){
+        return enumsDao.findAllByIllnessSubtype();
+    }
+
+    public List<Enums> findMedicalSectionEnums(){
+        return enumsDao.findAllByMedicalSection();
+    }
 
 
+    public List<Enums> findBodyPartsEnums() {
+        return enumsDao.findAllByBodyParts();
+    }
 }

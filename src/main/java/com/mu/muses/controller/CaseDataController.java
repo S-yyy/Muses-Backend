@@ -8,9 +8,12 @@ import com.mu.muses.dto.Response;
 import com.mu.muses.entity.CaseData;
 import com.mu.muses.entity.Dataset;
 import com.mu.muses.entity.Enums;
+import com.mu.muses.entity.Research;
 import com.mu.muses.service.CaseDataService;
 import com.mu.muses.service.DatasetService;
 import com.mu.muses.service.EnumsService;
+import com.mu.muses.service.ResearchService;
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,8 +21,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
+@Api(tags = "多模态信息库")
 public class CaseDataController {
     @Autowired
     CaseDataService caseDataService;
@@ -27,6 +32,8 @@ public class CaseDataController {
     EnumsService enumsService;
     @Autowired
     DatasetService datasetService;
+    @Autowired
+    ResearchService researchService;
 
     @Operation(summary = "查询病例")
     @CrossOrigin
@@ -88,13 +95,12 @@ public class CaseDataController {
     @ResponseBody
     public RestResponse deleteCaseData(@RequestParam int id){
         if(caseDataService.findById(id)==null){
-            RestResponse.fail(ResultCode.FAIL_DELETE);
+            return RestResponse.fail(ResultCode.FAIL_DELETE);
         }
         else {
             caseDataService.deleteByID(id);
             return RestResponse.success();
         }
-        return RestResponse.success();
     }
 
     @Operation(summary = "批量删除病例")
@@ -130,6 +136,7 @@ public class CaseDataController {
         return RestResponse.success(caseDataService.findByPatientIdAndDate(patientId, visitDate));
     }
 
+
     @Operation(summary = "查询诊断类型枚举")
     @CrossOrigin
     @GetMapping(value = "/api/database/cases/treatmentType/enums")
@@ -137,6 +144,50 @@ public class CaseDataController {
     public RestResponse getTreatmentTypeEnums(){
         return RestResponse.success(enumsService.findAllByTreatmentType());
     }
+
+    @Operation(summary = "查询医疗影像类型枚举")
+    @CrossOrigin
+    @GetMapping(value = "/api/database/cases/medicalImages/enums")
+    @ResponseBody
+    public RestResponse getMedicalImagesEnums(){
+        return RestResponse.success(enumsService.findMedicalImagesEnums());
+    }
+
+
+    @Operation(summary = "查询体部枚举")
+    @CrossOrigin
+    @GetMapping(value = "/api/database/cases/bodyParts/enums")
+    @ResponseBody
+    public RestResponse getBodyPartsEnums(){
+        return RestResponse.success(enumsService.findBodyPartsEnums());
+    }
+
+
+    @Operation(summary = "查询疾病类型枚举")
+    @CrossOrigin
+    @GetMapping(value = "/api/database/cases/illness/enums")
+    @ResponseBody
+    public RestResponse getIllnessEnums(){
+        return RestResponse.success(enumsService.findIllnessEnums());
+    }
+
+
+    @Operation(summary = "查询疾病亚型枚举")
+    @CrossOrigin
+    @GetMapping(value = "/api/database/cases/illnessSubtype/enums")
+    @ResponseBody
+    public RestResponse getIllnessSubtypeEnums(){
+        return RestResponse.success(enumsService.findIllnessSubtypeEnums());
+    }
+
+    @Operation(summary = "查询科室枚举")
+    @CrossOrigin
+    @GetMapping(value = "/api/database/cases/medicalSection/enums")
+    @ResponseBody
+    public RestResponse getMedicalSection(){
+        return RestResponse.success(enumsService.findMedicalSectionEnums());
+    }
+
 
     @Operation(summary = "查询数据集列表")
     @CrossOrigin
@@ -157,6 +208,7 @@ public class CaseDataController {
     @PostMapping(value = "/api/database/datasets/saveDataset")
     @ResponseBody
     public RestResponse saveRole(@RequestBody Dataset dataset){
+        dataset.name = "数据集"+dataset.name;
         if(datasetService.save(dataset)){
             return RestResponse.success();
         }
@@ -164,6 +216,26 @@ public class CaseDataController {
             return RestResponse.fail(ResultCode.FAIL_UPDATE);
         }
     }
+
+    @Operation(summary = "添加病例数据到数据集")
+    @CrossOrigin
+    @PostMapping(value = "/api/database/datasets/addCaseDatas")
+    @ResponseBody
+    public RestResponse saveRole(@RequestBody Map<String,Object> map){
+        Dataset dataset = datasetService.findById((Integer) map.get("id"));
+        List<Integer> cases = dataset.getCases();
+        List<Integer> newCases = (List<Integer>) map.get("cases");
+
+        newCases.removeAll(cases);
+        if(!newCases.isEmpty()) {
+            cases.addAll(newCases);
+        }
+
+        dataset.setCases(cases);
+        datasetService.save(dataset);
+        return RestResponse.success();
+    }
+
 
     @Operation(summary = "删除数据集")
     @CrossOrigin

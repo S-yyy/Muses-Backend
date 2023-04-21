@@ -21,6 +21,6 @@ public class User {
     public String password;
 
     @Column(name = "role")
-    String role;
+    public String role;
 
 }

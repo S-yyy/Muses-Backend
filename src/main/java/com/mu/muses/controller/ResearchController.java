@@ -2,22 +2,50 @@ package com.mu.muses.controller;
 
 import com.mu.muses.config.RestResponse;
 import com.mu.muses.config.ResultCode;
+import com.mu.muses.dto.Dashboard;
+import com.mu.muses.dto.DashboardData;
 import com.mu.muses.dto.Response;
 import com.mu.muses.entity.Research;
+import com.mu.muses.enums.TrendType;
+import com.mu.muses.service.DatasetService;
 import com.mu.muses.service.ResearchService;
+import com.mu.muses.service.TrendDataService;
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
 @Controller
+@Api(tags = "科研课题管理")
 public class ResearchController {
     @Autowired
     ResearchService researchService;
+    @Autowired
+    TrendDataService trendDataService;
+    @Autowired
+    DatasetService datasetService;
+
+    @Operation(summary = "进行中的课题数")
+    @CrossOrigin
+    @GetMapping(value = "/api/research/topics/trend/topic")
+    @ResponseBody
+    public RestResponse getTopicTrend() {
+        return RestResponse.success(trendDataService.getTrend(TrendType.Research));
+    }
+
+    @Operation(summary = "科研方向分布")
+    @CrossOrigin
+    @GetMapping(value = "/api/research/topics/dist/subject")
+    @ResponseBody
+    public RestResponse getTopicDist() {
+        return RestResponse.success(datasetService.findTopics());
+    }
 
     @Operation(summary = "课题进度预览")
     @CrossOrigin

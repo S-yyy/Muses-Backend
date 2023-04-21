@@ -24,17 +24,8 @@ public interface DatasetDao extends JpaRepository<Dataset,Integer> {
     @Query(value = "select * from dataset ",nativeQuery = true)
     List<Dataset> findDash();
 
-    @Query(value = "select medical_images as label ,count(*) as value from casedata group by medical_images",nativeQuery = true)
-    List<Map<String, Object>> findDist();
-
-    @Query(value = "select body_parts as label ,count(*) as value from casedata group by body_parts",nativeQuery = true)
-    List<Map<String,Object>> find1();
-
-    @Query(value = "select illness as label ,count(*) as value from casedata where body_parts like :parts group by illness",nativeQuery = true)
-    List<Map<String,Object>> find2(@Param("parts") String parts);
-
-    @Query(value = "select illness_subtype as label ,count(*) as value from casedata where illness like :illness group by illness_subtype",nativeQuery = true)
-    List<Map<String,Object>> find3(@Param("illness") String illness);
+    @Query(value = "select topic_list from dataset ",nativeQuery = true)
+    List<String> findTopic();
 
 
 

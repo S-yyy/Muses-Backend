@@ -1,11 +1,9 @@
 package com.mu.muses.config;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import java.io.Serializable;
 
-@Data
 public class RestResponse<T> implements Serializable {
 
     /*** 请求是否成功  */
@@ -19,7 +17,7 @@ public class RestResponse<T> implements Serializable {
     private Integer code;
     /**  * 错误信息  */
     @ApiModelProperty(value = "错误信息")
-    private String msg;
+    private String message;
 
 
     public static <T> RestResponse success(){
@@ -53,8 +51,17 @@ public class RestResponse<T> implements Serializable {
 
     public  static <T> RestResponse fail(String msg){
         RestResponse response = new RestResponse();
+        response.setSuccess(false);
         response.setResultCode(ResultCode.FAIL);
         response.setMessage(msg);
+
+        return response;
+    }
+
+    public static  <T> RestResponse fail(String code,String message){
+        RestResponse response = new RestResponse();
+        response.setCode(Integer.parseInt(code));
+        response.setMessage(message);
         response.setSuccess(false);
         return response;
     }
@@ -80,16 +87,16 @@ public class RestResponse<T> implements Serializable {
     }
 
     public String getMessage() {
-        return msg;
+        return message;
     }
 
     public void setMessage(String message){
-        this.msg = message;
+        this.message= message;
     }
 
     private void setResultCode(ResultCode resultCode){
         this.code = resultCode.code();
-        this.msg = resultCode.message();
+        this.message = resultCode.message();
     }
 
 }

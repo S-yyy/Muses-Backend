@@ -12,10 +12,10 @@ public enum ResultCode {
     FAIL_UPDATE(502, "Update failed");
 
     private Integer code;
-    private String message;
+    private String msg;
     ResultCode(Integer code, String message){
         this.code = code;
-        this.message = message;
+        this.msg = message;
     }
 
     public Integer code(){
@@ -23,6 +23,6 @@ public enum ResultCode {
     }
 
     public String message(){
-        return this.message;
+        return this.msg;
     }
 }

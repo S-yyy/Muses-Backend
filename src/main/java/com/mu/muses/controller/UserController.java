@@ -7,6 +7,7 @@ import com.mu.muses.entity.Role;
 import com.mu.muses.entity.User;
 import com.mu.muses.service.RoleService;
 import com.mu.muses.service.UserService;
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Controller
+@Api(tags = "用户")
 public class UserController {
     @Autowired
     UserService userService;

@@ -83,13 +83,8 @@ public class CaseDataService {
     }
 
 
-    public boolean save(CaseData caseData){
-        if (caseDataDao.save(caseData)!=null){
-            return true;
-        }
-        else {
-            return false;
-        }
+    public CaseData save(CaseData caseData){
+        return caseDataDao.save(caseData);
     }
 
     public boolean saveAll(List<CaseData> caseDatas){

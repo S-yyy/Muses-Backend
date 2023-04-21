@@ -1,5 +1,7 @@
 package com.mu.muses.controller;
 
+import com.mu.muses.config.RestResponse;
+import com.mu.muses.config.ResultCode;
 import com.mu.muses.dto.Login;
 import com.mu.muses.entity.Role;
 import com.mu.muses.entity.User;
@@ -7,16 +9,9 @@ import com.mu.muses.service.RoleService;
 import com.mu.muses.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 public class UserController {
@@ -29,17 +24,15 @@ public class UserController {
     @CrossOrigin
     @PostMapping(value = "/api/account/login")
     @ResponseBody
-    public ResponseEntity<String> login( @RequestBody Login login) {
+    public RestResponse login(@RequestBody Login login) {
         if (userService.findByID(login.id)==null){
-            String str = "no account";
-            return new ResponseEntity<String>(str, HttpStatus.NOT_FOUND);
+            return RestResponse.fail(ResultCode.FAIL);
         }
         else if (!userService.findByIdAndPassword(login.id, login.password)){
-            String str = "wrong password";
-            return new ResponseEntity<String>(str, HttpStatus.BAD_REQUEST);
+            return RestResponse.fail(ResultCode.FAIL);
         }
         else{
-            return new ResponseEntity<String>(HttpStatus.OK);
+            return RestResponse.success();
         }
     }
 
@@ -47,24 +40,24 @@ public class UserController {
     @CrossOrigin
     @GetMapping(value = "/api/account/roles")
     @ResponseBody
-    public List<Role> getRoleList(){
-        return roleService.findAll();
+    public RestResponse getRoleList(){
+        return RestResponse.success(roleService.findAll());
     }
 
     @Operation(summary = "保存或新建角色")
     @CrossOrigin
     @PostMapping(value = "/api/account/saveRole")
     @ResponseBody
-    public boolean saveRole(@RequestBody Role role){
+    public RestResponse saveRole(@RequestBody Role role){
         Role existRole = roleService.findRole(role.name);
         if (existRole!= null) {
             role.id = existRole.id;
         }
         if (roleService.save(role)!=null){
-            return true;
+            return RestResponse.success();
         }
         else {
-            return false;
+            return RestResponse.fail(ResultCode.FAIL_UPDATE);
         }
     }
 
@@ -72,16 +65,19 @@ public class UserController {
     @CrossOrigin
     @GetMapping(value = "/api/account/users")
     @ResponseBody
-    public List<User> users(){
-        return userService.findAll();
+    public RestResponse users(){
+        return RestResponse.success(userService.findAll());
     }
 
     @Operation(summary = "保存或更新用户")
     @CrossOrigin
     @GetMapping(value = "/api/account/saveUser")
     @ResponseBody
-    public boolean saveUser(@RequestBody User user){
-        return userService.newUser(user);
+    public RestResponse saveUser(@RequestBody User user){
+        if(!userService.newUser(user)){
+            return RestResponse.fail(ResultCode.FAIL_UPDATE);
+        }
+        return RestResponse.success();
     }
 
 

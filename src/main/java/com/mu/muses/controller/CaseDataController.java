@@ -1,5 +1,7 @@
 package com.mu.muses.controller;
 
+import com.mu.muses.config.RestResponse;
+import com.mu.muses.config.ResultCode;
 import com.mu.muses.dto.CaseQuery;
 import com.mu.muses.dto.DatabaseQuery;
 import com.mu.muses.dto.Response;
@@ -9,7 +11,6 @@ import com.mu.muses.entity.Enums;
 import com.mu.muses.service.CaseDataService;
 import com.mu.muses.service.DatasetService;
 import com.mu.muses.service.EnumsService;
-import io.swagger.models.auth.In;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,7 @@ public class CaseDataController {
     @CrossOrigin
     @PostMapping(value = "/api/database/cases")
     @ResponseBody
-    public Response findCaseData(@RequestBody CaseQuery caseQuery){
+    public RestResponse findCaseData(@RequestBody CaseQuery caseQuery){
         CaseData caseData = new CaseData();
         caseData.treatmentType = caseQuery.treatmentType;
         caseData.medicalImages = caseQuery.medicalImages;
@@ -45,136 +46,150 @@ public class CaseDataController {
         response.pageNum = caseQuery.pageNo;
         response.pageSize = page.getTotalPages();
         response.total = (int)page.getTotalElements();
-        return response;
+        return RestResponse.success(response);
     }
 
-    @Operation(summary = "查询病例")
+    @Operation(summary = "查询单个病例")
     @CrossOrigin
     @PostMapping(value = "/api/database/case")
     @ResponseBody
-    public CaseData findSingleCase(@RequestParam int id){
-        return caseDataService.findById(id);
+    public RestResponse findSingleCase(@RequestParam int id){
+        return RestResponse.success(caseDataService.findById(id));
     }
 
     @Operation(summary = "录入病例")
     @CrossOrigin
     @PostMapping(value = "/api/database/cases/saveCaseData")
     @ResponseBody
-    public Boolean saveCaseData(@RequestBody CaseData caseData){
-        return caseDataService.save(caseData);
+    public RestResponse saveCaseData(@RequestBody CaseData caseData){
+        CaseData data = caseDataService.save(caseData);
+        if (data!= null)
+            return RestResponse.success();
+        else
+            return RestResponse.fail(ResultCode.FAIL_UPDATE);
     }
 
     @Operation(summary = "批量录入病例")
     @CrossOrigin
     @PostMapping(value = "/api/database/cases/saveCaseDatas")
     @ResponseBody
-    public Boolean saveCaseDatas(@RequestBody List<CaseData> caseDatas){
-        return caseDataService.saveAll(caseDatas);
+    public RestResponse saveCaseDatas(@RequestBody List<CaseData> caseDatas){
+        if(caseDataService.saveAll(caseDatas)){
+            return RestResponse.success();
+        }
+        else {
+            return RestResponse.fail(ResultCode.FAIL_UPDATE);
+        }
     }
 
     @Operation(summary = "删除病例")
     @CrossOrigin
     @DeleteMapping(value = "/api/database/cases/deletePostData")
     @ResponseBody
-    public Boolean deleteCaseData(@RequestParam int id){
+    public RestResponse deleteCaseData(@RequestParam int id){
         if(caseDataService.findById(id)==null){
-            return false;
+            RestResponse.fail(ResultCode.FAIL_DELETE);
         }
         else {
             caseDataService.deleteByID(id);
-            return true;
+            return RestResponse.success();
         }
+        return RestResponse.success();
     }
 
     @Operation(summary = "批量删除病例")
     @CrossOrigin
     @DeleteMapping(value = "/api/database/cases/deletePostDatas")
     @ResponseBody
-    public Boolean deleteCaseDatas(@RequestBody List<Integer> id){
-        Boolean delete = true;
+    public RestResponse deleteCaseDatas(@RequestBody List<Integer> id){
         for (int item : id){
             if(caseDataService.findById(item)==null){
-                delete = false;
+                return RestResponse.fail(ResultCode.FAIL_DELETE);
             }
         else {
                 caseDataService.deleteByID(item);
             }
         }
-        return delete;
+        return RestResponse.success();
+
     }
 
     @Operation(summary = "查询患者所有时间节点病例列表")
     @CrossOrigin
     @GetMapping(value = "/api/database/cases/patients")
     @ResponseBody
-    public List<CaseData> getCaseDatas(@RequestParam int patientId){
-        return caseDataService.findByPatientId(patientId);
+    public RestResponse getCaseDatas(@RequestParam int patientId){
+        return RestResponse.success(caseDataService.findByPatientId(patientId));
     }
 
     @Operation(summary = "查询患者某个时间点病例列表")
     @CrossOrigin
     @GetMapping(value = "/api/database/cases/patient")
     @ResponseBody
-    public CaseData getPatientCaseData(@RequestParam int patientId,@RequestParam String visitDate){
-        return caseDataService.findByPatientIdAndDate(patientId, visitDate);
+    public RestResponse getPatientCaseData(@RequestParam int patientId,@RequestParam String visitDate){
+        return RestResponse.success(caseDataService.findByPatientIdAndDate(patientId, visitDate));
     }
 
     @Operation(summary = "查询诊断类型枚举")
     @CrossOrigin
     @GetMapping(value = "/api/database/cases/treatmentType/enums")
     @ResponseBody
-    public List<Enums> getTreatmentTypeEnums(){
-        return enumsService.findAllByTreatmentType();
+    public RestResponse getTreatmentTypeEnums(){
+        return RestResponse.success(enumsService.findAllByTreatmentType());
     }
 
     @Operation(summary = "查询数据集列表")
     @CrossOrigin
     @PostMapping(value = "/api/database/datasets")
     @ResponseBody
-    public Response findDatasets(@RequestBody DatabaseQuery databaseQuery){
+    public RestResponse findDatasets(@RequestBody DatabaseQuery databaseQuery){
         Response response = new Response();
         Page<Dataset> page = datasetService.findDash(databaseQuery);
         response.data = page.getContent().toArray();
         response.total = (int) page.getTotalElements();
         response.pageSize = page.getTotalPages();
         response.pageNum = databaseQuery.pageNo;
-        return response;
+        return RestResponse.success(response);
     }
 
     @Operation(summary = "保存或更新数据集")
     @CrossOrigin
     @PostMapping(value = "/api/database/datasets/saveDataset")
     @ResponseBody
-    public boolean saveRole(@RequestBody Dataset dataset){
-        return datasetService.save(dataset);
+    public RestResponse saveRole(@RequestBody Dataset dataset){
+        if(datasetService.save(dataset)){
+            return RestResponse.success();
+        }
+        else{
+            return RestResponse.fail(ResultCode.FAIL_UPDATE);
+        }
     }
 
     @Operation(summary = "删除数据集")
     @CrossOrigin
     @DeleteMapping(value = "/api/database/datasets/deleteDataset")
     @ResponseBody
-    public boolean saveRole(@RequestParam int id){
+    public RestResponse saveRole(@RequestParam int id){
         if (datasetService.findById(id)==null){
-            return false;
+            return RestResponse.fail(ResultCode.FAIL_DELETE);
         }
-        return datasetService.delete(id);
+        return RestResponse.success();
     }
 
     @Operation(summary = "批量删除数据集")
     @CrossOrigin
     @DeleteMapping(value = "/api/database/cases/deleteDatasets")
     @ResponseBody
-    public Boolean deleteDatasets(@RequestParam List<Integer> id){
-        Boolean delete = true;
+    public RestResponse deleteDatasets(@RequestParam List<Integer> id){
         for (int item : id){
             if(datasetService.findById(item)==null){
-                delete = false;
+                return RestResponse.fail(ResultCode.FAIL_DELETE);
             }
             else {
                 datasetService.delete(item);
             }
         }
-        return delete;
+            return RestResponse.success();
     }
 
 }

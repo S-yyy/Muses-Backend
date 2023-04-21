@@ -1,5 +1,6 @@
 package com.mu.muses.controller;
 
+import com.mu.muses.config.RestResponse;
 import com.mu.muses.dto.Dashboard;
 import com.mu.muses.dto.DashboardData;
 import com.mu.muses.entity.Enums;
@@ -28,7 +29,7 @@ public class DataController {
     @CrossOrigin
     @GetMapping(value = "/api/database/dashboard/trend/cases")
     @ResponseBody
-    public DashboardData getDashboardTrendCases(){
+    public RestResponse getDashboardTrendCases(){
         DashboardData data = new DashboardData();
         data.total = caseDataService.findAll().size();
         data.value = caseDataService.findThisWeek().size();
@@ -47,39 +48,39 @@ public class DataController {
             }
         }
         data.data = caseDataService.getNumByDate();
-        return data;
+        return RestResponse.success(data);
     }
 
     @Operation(summary = "影像类型分布趋势")
     @CrossOrigin
     @GetMapping(value = "/api/database/dashboard/dist/images")
     @ResponseBody
-    public List<Map<String,Object>> getDistImages(){
-        return datasetService.findDistImages();
+    public RestResponse getDistImages(){
+        return RestResponse.success(datasetService.findDistImages());
     }
 
     @Operation(summary = "各体部影像数据量分布")
     @CrossOrigin
     @GetMapping(value = "/api/database/dashboard/dist/parts")
     @ResponseBody
-    public List<Map<String,Object>> getParts(){
-        return datasetService.findStep1();
+    public RestResponse getParts(){
+        return RestResponse.success(datasetService.findStep1());
     }
 
     @Operation(summary = "单体部内各疾病的影像数据量分布")
     @CrossOrigin
     @GetMapping(value = "/api/database/dashboard/dist/illness")
     @ResponseBody
-    public List<Map<String,Object>> getIllness(@RequestParam String parts){
-        return datasetService.findStep2(parts);
+    public RestResponse getIllness(@RequestParam String parts){
+        return RestResponse.success(datasetService.findStep2(parts));
     }
 
     @Operation(summary = "单疾病下各亚型的影像数据量分布")
     @CrossOrigin
     @GetMapping(value = "/api/database/dashboard/dist/illness/subtype")
     @ResponseBody
-    public List<Map<String,Object>> getIllnessSubtype(@RequestParam String illness){
-        return datasetService.findStep3(illness);
+    public RestResponse getIllnessSubtype(@RequestParam String illness){
+        return RestResponse.success(datasetService.findStep3(illness));
     }
 
 }

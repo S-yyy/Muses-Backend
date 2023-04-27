@@ -1,14 +1,12 @@
 package com.mu.muses.controller;
 
 import com.mu.muses.config.RestResponse;
-import com.mu.muses.config.ResultCode;
+import com.mu.muses.enums.ResultCode;
 import com.mu.muses.dto.CaseQuery;
 import com.mu.muses.dto.DatabaseQuery;
 import com.mu.muses.dto.Response;
 import com.mu.muses.entity.CaseData;
 import com.mu.muses.entity.Dataset;
-import com.mu.muses.entity.Enums;
-import com.mu.muses.entity.Research;
 import com.mu.muses.service.CaseDataService;
 import com.mu.muses.service.DatasetService;
 import com.mu.muses.service.EnumsService;
@@ -56,13 +54,6 @@ public class CaseDataController {
         return RestResponse.success(response);
     }
 
-    @Operation(summary = "查询单个病例")
-    @CrossOrigin
-    @PostMapping(value = "/api/database/case")
-    @ResponseBody
-    public RestResponse findSingleCase(@RequestParam int id){
-        return RestResponse.success(caseDataService.findById(id));
-    }
 
     @Operation(summary = "录入病例")
     @CrossOrigin
@@ -91,7 +82,7 @@ public class CaseDataController {
 
     @Operation(summary = "删除病例")
     @CrossOrigin
-    @DeleteMapping(value = "/api/database/cases/deletePostData")
+    @DeleteMapping(value = "/api/database/cases/deleteCaseData")
     @ResponseBody
     public RestResponse deleteCaseData(@RequestParam int id){
         if(caseDataService.findById(id)==null){
@@ -105,7 +96,7 @@ public class CaseDataController {
 
     @Operation(summary = "批量删除病例")
     @CrossOrigin
-    @DeleteMapping(value = "/api/database/cases/deletePostDatas")
+    @DeleteMapping(value = "/api/database/cases/deleteCaseDatas")
     @ResponseBody
     public RestResponse deleteCaseDatas(@RequestBody List<Integer> id){
         for (int item : id){
@@ -122,7 +113,7 @@ public class CaseDataController {
 
     @Operation(summary = "查询患者所有时间节点病例列表")
     @CrossOrigin
-    @GetMapping(value = "/api/database/cases/patients")
+    @PostMapping(value = "/api/database/cases/patients")
     @ResponseBody
     public RestResponse getCaseDatas(@RequestParam int patientId){
         return RestResponse.success(caseDataService.findByPatientId(patientId));
@@ -130,7 +121,7 @@ public class CaseDataController {
 
     @Operation(summary = "查询患者某个时间点病例列表")
     @CrossOrigin
-    @GetMapping(value = "/api/database/cases/patient")
+    @PostMapping(value = "/api/database/cases/patient")
     @ResponseBody
     public RestResponse getPatientCaseData(@RequestParam int patientId,@RequestParam String visitDate){
         return RestResponse.success(caseDataService.findByPatientIdAndDate(patientId, visitDate));
@@ -252,7 +243,7 @@ public class CaseDataController {
     @CrossOrigin
     @DeleteMapping(value = "/api/database/cases/deleteDatasets")
     @ResponseBody
-    public RestResponse deleteDatasets(@RequestParam List<Integer> id){
+    public RestResponse deleteDatasets(@RequestBody List<Integer> id){
         for (int item : id){
             if(datasetService.findById(item)==null){
                 return RestResponse.fail(ResultCode.FAIL_DELETE);

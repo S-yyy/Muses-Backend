@@ -2,6 +2,7 @@ package com.mu.muses.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.mu.muses.enums.Roles;
 
 import javax.persistence.*;
 import java.util.ArrayList;

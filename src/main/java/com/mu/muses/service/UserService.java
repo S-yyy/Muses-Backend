@@ -2,10 +2,10 @@ package com.mu.muses.service;
 
 import com.mu.muses.dao.RoleDao;
 import com.mu.muses.dao.UserDao;
-import com.mu.muses.entity.Role;
 import com.mu.muses.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.util.List;
 
@@ -16,13 +16,15 @@ public class UserService {
     @Autowired
     RoleDao roleDao;
 
+    String salt = "MusesSaltMuseSaltHelloHello";
+
     public User findByID(int id){
         return userDao.findById(id);
     }
 
-    public boolean findByIdAndPassword(int id, String password){
+    public boolean login(int id, String password){
         User user = userDao.findById(id);
-        if (user == null || !user.password.equals(password)){
+        if (user == null || !user.password.equals(encode(password))){
             return false;
         }
         else{
@@ -34,11 +36,19 @@ public class UserService {
         return userDao.findAll();
     }
 
+    public String encode(String password){
+        return DigestUtils.md5DigestAsHex((salt + salt + password + salt + salt).getBytes());
+    }
+
+
     public boolean newUser(User user){
+        user.password = encode(user.password);
+
         if(userDao.save(user)!=null){
             return true;}
         else {
             return false;
         }
     }
+
 }

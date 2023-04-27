@@ -1,4 +1,4 @@
-package com.mu.muses.config;
+package com.mu.muses.enums;
 
 
 public enum ResultCode {

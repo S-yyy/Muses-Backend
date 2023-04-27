@@ -23,6 +23,9 @@ public interface CaseDataDao extends JpaRepository<CaseData,Integer> {
 
     CaseData findByPatientIdAndVisitDate(int patientId,String visitDate);
 
+    @Query(value = "select * from casedata where medical_images is not null",nativeQuery = true)
+    List<CaseData> findImagesAll();
+
     @Query(value = "select * from casedata where visit_date >= :date ",nativeQuery = true)
     List<CaseData> getThisWeek(@Param("date") Date date);
 

@@ -1,7 +1,9 @@
 package com.mu.muses.service;
 
+import com.mu.muses.dao.JournalDao;
 import com.mu.muses.dao.ResearchDao;
 import com.mu.muses.dto.Dashboard;
+import com.mu.muses.entity.JournalInformation;
 import com.mu.muses.entity.Research;
 import com.mu.muses.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -18,6 +19,8 @@ import java.util.*;
 public class ResearchService {
     @Autowired
     ResearchDao researchDao;
+    @Autowired
+    JournalDao journalDao;
 
     public boolean save(Research research){
         researchDao.save(research);
@@ -68,6 +71,10 @@ public class ResearchService {
         }
         java.sql.Date date = new java.sql.Date(d.getTime());
         return date;
+    }
+
+    public JournalInformation saveJournal(JournalInformation journalInformation){
+        return journalDao.save(journalInformation);
     }
 
 

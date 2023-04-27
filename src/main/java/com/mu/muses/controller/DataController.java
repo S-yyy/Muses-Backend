@@ -1,9 +1,6 @@
 package com.mu.muses.controller;
 
 import com.mu.muses.config.RestResponse;
-import com.mu.muses.dto.Dashboard;
-import com.mu.muses.dto.DashboardData;
-import com.mu.muses.entity.Enums;
 import com.mu.muses.enums.TrendType;
 import com.mu.muses.service.CaseDataService;
 import com.mu.muses.service.DatasetService;
@@ -17,9 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @Api(tags = "数据大盘看板")

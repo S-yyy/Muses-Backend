@@ -48,8 +48,6 @@ public class DatasetService {
 
     public Page<Dataset> findDash(DatabaseQuery databaseQuery){
         Pageable pageable = PageRequest.of(databaseQuery.pageNo, databaseQuery.pageSize);
-        System.out.println(databaseQuery.owner);
-        System.out.println(databaseQuery.topic);
         if (databaseQuery.topic == null){
             databaseQuery.topic = "";
         }

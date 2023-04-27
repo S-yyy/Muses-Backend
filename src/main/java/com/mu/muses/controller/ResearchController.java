@@ -1,9 +1,7 @@
 package com.mu.muses.controller;
 
 import com.mu.muses.config.RestResponse;
-import com.mu.muses.config.ResultCode;
-import com.mu.muses.dto.Dashboard;
-import com.mu.muses.dto.DashboardData;
+import com.mu.muses.enums.ResultCode;
 import com.mu.muses.dto.Response;
 import com.mu.muses.entity.Research;
 import com.mu.muses.enums.TrendType;
@@ -17,9 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @Api(tags = "科研课题管理")
@@ -46,6 +42,15 @@ public class ResearchController {
     public RestResponse getTopicDist() {
         return RestResponse.success(datasetService.findTopics());
     }
+
+    @Operation(summary = "已发表论文数")
+    @CrossOrigin
+    @GetMapping(value = "/api/research/topics/trend/papers")
+    @ResponseBody
+    public RestResponse getPaperTrend() {
+        return RestResponse.success(trendDataService.getTrend(TrendType.Journal));
+    }
+
 
     @Operation(summary = "课题进度预览")
     @CrossOrigin
@@ -91,7 +96,7 @@ public class ResearchController {
 
     @Operation(summary = "查询课题详情")
     @CrossOrigin
-    @GetMapping(value = "/api/research/topics/topic")
+    @GetMapping(value = "/api/research/topic")
     @ResponseBody
     public RestResponse getTopic(@RequestParam int id) {
         return RestResponse.success(researchService.findById(id));
@@ -130,7 +135,7 @@ public class ResearchController {
 
     @Operation(summary = "查询课题状态枚举")
     @CrossOrigin
-    @GetMapping(value = "/api/topics/status/enums")
+    @GetMapping(value = "/api/research/topics/status/enums")
     @ResponseBody
     public RestResponse getStatusEnums() {
         return RestResponse.success(getTopicDistStatus());

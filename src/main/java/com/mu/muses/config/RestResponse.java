@@ -1,21 +1,18 @@
 package com.mu.muses.config;
 
+import com.mu.muses.enums.ResultCode;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
 public class RestResponse<T> implements Serializable {
 
-    /*** 请求是否成功  */
     @ApiModelProperty(value = "请求是否成功")
     private boolean success;
-    /**  * 具体数据  */
     @ApiModelProperty(value = "具体数据")
     private T data;
-    /**  * 错误码  */
     @ApiModelProperty(value = "错误码")
     private Integer code;
-    /**  * 错误信息  */
     @ApiModelProperty(value = "错误信息")
     private String message;
 
@@ -39,6 +36,7 @@ public class RestResponse<T> implements Serializable {
         RestResponse response = new RestResponse();
         response.setResultCode(ResultCode.FAIL);
         response.setSuccess(false);
+        response.setData("");
         return response;
     }
 
@@ -53,6 +51,7 @@ public class RestResponse<T> implements Serializable {
         RestResponse response = new RestResponse();
         response.setSuccess(false);
         response.setResultCode(ResultCode.FAIL);
+        response.setData("");
         response.setMessage(msg);
 
         return response;
@@ -63,6 +62,7 @@ public class RestResponse<T> implements Serializable {
         response.setCode(Integer.parseInt(code));
         response.setMessage(message);
         response.setSuccess(false);
+        response.setData("");
         return response;
     }
 
@@ -72,6 +72,10 @@ public class RestResponse<T> implements Serializable {
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public boolean isSuccess() {
+        return success;
     }
 
     public Object getData(){

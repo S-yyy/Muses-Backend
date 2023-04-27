@@ -1,10 +1,10 @@
 package com.mu.muses.service;
 
 import com.mu.muses.dao.CaseDataDao;
+import com.mu.muses.dao.JournalDao;
 import com.mu.muses.dao.ResearchDao;
 import com.mu.muses.dto.Dashboard;
 import com.mu.muses.dto.DashboardData;
-import com.mu.muses.entity.CaseData;
 import com.mu.muses.enums.TrendType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,8 @@ public class TrendDataService {
     CaseDataDao caseDataDao;
     @Autowired
     ResearchDao researchDao;
+    @Autowired
+    JournalDao journalDao;
 
     public List<?> findThisWeek(TrendType trendType){
         Calendar calendar = Calendar.getInstance();
@@ -35,6 +37,8 @@ public class TrendDataService {
                 return researchDao.getThisWeek(thisWeek);
             case Images:
                 return caseDataDao.getImagesThisWeek(thisWeek);
+            case Journal:
+                return journalDao.getThisWeek(thisWeek);
             default:
                 return null;
         }
@@ -53,6 +57,8 @@ public class TrendDataService {
                 return researchDao.getLastWeek(start,end);
             case Images:
                 return caseDataDao.getImagesLastWeek(start,end);
+            case Journal:
+                return journalDao.getLastWeek(start,end);
             default:
                 return null;
         }
@@ -83,6 +89,9 @@ public class TrendDataService {
             case Images:
                 result = caseDataDao.findImageSumByDate();
                 break;
+            case Journal:
+                result = journalDao.findSumByDate();
+                break;
             default:
                 return null;
         }
@@ -110,10 +119,30 @@ public class TrendDataService {
         return list;
     }
 
+    public int findAll(TrendType trendType){
+        switch (trendType){
+            case Research :
+                return researchDao.findAll().size();
+            case Images:
+                return caseDataDao.findAll().size();
+            case CaseData:
+                return caseDataDao.findImagesAll().size();
+            case Journal:
+                return journalDao.findAll().size();
+            default:
+                return 0;
+        }
+    }
+
     public DashboardData getTrend(TrendType trendType){
         DashboardData data = new DashboardData();
-        data.total = researchDao.findAll().size();
-        data.value = findThisWeek(trendType).size();
+        data.total = findAll(trendType);
+        if (findThisWeek(trendType)!=null){
+            data.value = findThisWeek(trendType).size();
+        }
+        else{
+            data.value = 0;
+        }
         int lastWeek = findLastWeek(trendType).size();
         if(lastWeek == 0){
             data.rate = "";
